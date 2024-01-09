@@ -1,18 +1,17 @@
 <template>
   <div id="app">
-        <NavigationBar v-on:changePage="handleChangePage"/>
+        <NavigationBar/>
         <HomePage v-if="page=='stock'"/>
         <NewsPage v-else-if="page=='news'"/>
-
-      
+        <StockDescriptopnPage v-else-if="page=='descr'"/>
   </div>
 </template>
 
 <script>
-import NavigationBar from "./components/NavigationBar.vue";
-import HomePage from "./components/HomePage.vue";
-import NewsPage from "./components/NewsPage.vue";
-
+import NavigationBar from "./components/Navigation-Bar.vue";
+import HomePage from "./components/Home-Page.vue";
+import NewsPage from "./components/News-Page.vue";
+import StockDescriptopnPage from "./components/Stock-Description.vue";
 import '@fortawesome/fontawesome-free/css/all.css';
 
 
@@ -21,25 +20,14 @@ export default {
     components: {
         NavigationBar,
         HomePage,
-        NewsPage
+        NewsPage,
+        StockDescriptopnPage
     },
 
-    data() {
-        return {
-            page: 'stock',
-            //stockNewsList: [],
-         
+    computed: {
+        page() {
+            return this.$store.getters.getCurrentPage;
         }
-    },
-
-    mounted: function() {
-
-    },
-
-    methods: {
-        handleChangePage: function(newPage) {
-            this.page = newPage;
-        },
     }
 }
 </script>

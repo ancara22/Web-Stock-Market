@@ -1,7 +1,7 @@
 <template>
     <div>
         <div id="content">
-            <div id="left-box">
+            <div id="left-box" >
                 <div class="titles">
                     <h3>Top Day Moves</h3>
                     <div>
@@ -9,13 +9,9 @@
                         <span>Price</span>
                     </div>
                 </div>
-                <div id="stock-box">
-                    <StockElement v-for="stock in stocksDataArray" :chart="stock.chart" :descr="stock.descr" v-bind:key="stock.descr.id"/>
+                <div id="stock-box"  >
+                    <StockElement class="stock-element" v-for="stock in stockDataArray"  :chart="stock.chart" :descr="stock.descr" v-bind:key="stock.descr.id"/>
                 </div>
-            </div>
-            <div id="rigth-box">
-                <div id="sentiment-box"></div>
-                <div id="news-box"></div>
             </div>
         </div>
     </div>
@@ -23,25 +19,23 @@
 
 
 <script>
-import StockElement from "./stock-elements/StockElement.vue";
-import stockJson from '../data.json';
+import StockElement from "./stock-elements/Stock-Element.vue";
 
 export default {
     name: "HomePage",
 
-    mounted: function() {
-        console.log('homePage', this.stocksDataArray)
-    },
-    
-    data() {
-        return {
-            stocksDataArray: stockJson
-        } 
-    },
-
     components: {
         StockElement,
     },
+
+    computed: {
+        stockDataArray() {
+            return this.$store.getters.getStockData;
+        }
+    }
+
+
+   
 }
 
 </script>
@@ -58,7 +52,7 @@ export default {
 #left-box {
     background-color: white;
     height: 75vh;
-    width: 50%;
+    width: 90%;
     border-radius: 10px;
     min-width: 600px;
     margin-bottom: 50px;
@@ -70,6 +64,8 @@ export default {
     width: 40%;
     margin-left: 20px;
 }
+
+/*
 
 #sentiment-box {
     border-radius: 10px;
@@ -85,6 +81,7 @@ export default {
     width: 100%;
     height: 58vh;
 }
+*/
 
 #stock-box {
     padding-top: 120px;
@@ -92,6 +89,14 @@ export default {
     justify-content: center;
     flex-direction: column;
     
+}
+
+.stock-element {
+    cursor: pointer;
+}
+
+.stock-element:hover {
+    background-color: rgb(255, 247, 235);
 }
 
 .titles {

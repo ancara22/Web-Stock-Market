@@ -1,5 +1,5 @@
 <template>
-    <div class="element-box">
+    <div class="element-box"  @click="openElementDescriptionPage()">
         <div class="names">
             <span class="stock-id">{{ this.descr.id }}</span>
             <span class="stock-name">{{ this.descr.name }}</span>
@@ -19,7 +19,7 @@
 
 
 <script>
-import ChartElement from "./ChartElement.vue";
+import ChartElement from "./Chart.vue";
 
 export default {
     name: "StockElement",
@@ -30,6 +30,14 @@ export default {
     props: {
         chart: { type: Array },
         descr: { type: Object }
+    },
+
+    methods: {
+        openElementDescriptionPage: function() {
+            this.$store.commit('changePage', 'descr');
+        },
+
+        
     }
 }
 </script>

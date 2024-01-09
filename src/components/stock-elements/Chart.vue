@@ -10,42 +10,38 @@ import Chart from 'chart.js/auto';
 export default {
     name: "ChartElement",
     props: {
-        chartData: {
-            type: Array
-        }, 
-        detailed: {
-            type: Boolean
-        }
+        chartData: { type: Array },      //Chart data
+        detailed: { type: Boolean }      //True to show the graph scales, false to show minumum details
     },
 
     data() {
         return {
-            chart: null,
-            displayGrid: false,
-            pointRadoius: 0
+            chart: null,        //The future chart object
+            displayGrid: true, //Chart detailing controler
+            pointRadoius: 2,     //Chart points size
+            borderWidth: 3
         }
     },
 
     mounted: function() {
-        if(this.detailed) {
-            this.displayGrid = true
-            this.pointRadoius = 1
+        //Set the detailing
+        if(!this.detailed) {
+            this.displayGrid = false
+            this.pointRadoius = 0
+            this.borderWidth = 1
         }
 
-        this.renderChart();
+        this.renderChart(); //Render the chart
     },
 
-        
-
-
     methods: {
+        //Chart rendering
         renderChart: function() {
-            const ctxt = this.$refs.chartBox.getContext('2d');
+            const ctxt = this.$refs.chartBox.getContext('2d');      //Get the output box
+            const timestamps = this.chartData.map(item => item["timestamp"]);   //Get the timestamps
+            const closePrices = this.chartData.map(item => item.data["close"]); //Get the prices
 
-            const timestamps = this.chartData.map(item => item.timestamp);
-            const closePrices = this.chartData.map(item => item.data.close);
-
-
+            //Set the chart
             this.chart = new Chart(ctxt, {
                 type: 'line',
                 data: {
@@ -54,16 +50,14 @@ export default {
                             label: 'Stock Price',
                             data: Object.values(closePrices),
                             borderColor: 'rgb(3, 193, 3)',
-                            borderWidth: 1,
+                            borderWidth: this.borderWidth,
                             fill: false,
                             pointRadius: this.pointRadoius,
                         }]
                     },
                     options: {
                         plugins: {
-                            legend: {
-                                display: false
-                            }
+                            legend: { display: false }
                         },
                         scales: {
                             x: { 
@@ -81,28 +75,11 @@ export default {
                             label: function(tooltipItem) {
                                     return tooltipItem.yLabel;
                             }
-                        
                         }
                     }
-            })
+                })
         },
 
-        formattedData: function() {
-            let dataCopy = this.chartData;
-           
-            
-            dataCopy.map(([timestamp, values]) => {
-                return {
-                    x: new Date(timestamp).getTime(),
-                    y: parseFloat(values['close']),
-                };
-            });
-
-            return dataCopy;
-        }
-
-        
-    
     }
 }
 </script>
@@ -111,6 +88,8 @@ export default {
 <style scoped>
 .chart {
     width: inherit;
+    display: flex;
+    justify-content: center;
 }
 
 </style>

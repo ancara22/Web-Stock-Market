@@ -1,18 +1,16 @@
 <template>
-    <div id="news-page-box">
-        <div class="news" v-for="news in newsData" :key="news.id" @click="openUrl(news.url)">
-            <div class="image">
-                <img :src="news.image" alt="">
-            </div>
-            <div class="news-descr">
-                <div class="title">{{ news.headline }}</div>
-                <div class="short_body">{{ news.summary }}</div>
-            </div>
-            <div class="sentiment-box">
-                <span class="sentiment">POSITIVE</span>
-                <div class="smile">
-                    <i class="fa fa-smile"></i>
-                </div>
+    <div class="news" @click="openUrl()">
+        <div class="image">
+            <img :src="this.news.image" alt="">
+        </div>
+        <div class="news-descr">
+            <div class="title">{{ this.news.headline }}</div>
+            <div class="short_body">{{ this.news.summary }}</div>
+        </div>
+        <div class="sentiment-box">
+            <span class="sentiment">POSITIVE</span>
+            <div class="smile">
+                <i class="fa fa-smile"></i>
             </div>
         </div>
     </div>
@@ -20,44 +18,27 @@
 
 
 <script>
-import newsJson from "../news.json";
 import 'font-awesome/css/font-awesome.css';
 
-
 export default {
-    name: "NewsPage",
-    components: {
-    },
-    data() {
-        return {
-            news_api_key: "cmc3uq9r01qpbvb54f90cmc3uq9r01qpbvb54f9g",
-            news_url: `https://finnhub.io/api/v1/news?category=${this.news_api_key}`, //General News
+    name: "NewsElement",
 
-            newsData: newsJson,
+    props: {
+        news: {
+            type: Object
         }
     },
-
+   
     methods: {
-        openUrl: function(url) {
-            console.log('first', url)
-                window.open(url);
-        }
+        openUrl: function() {
+            window.open(this.news.url);
+        } 
     }
 }
 </script>
 
 
 <style scoped>
-#news-page-box {
-    margin-top: 80px;
-    width: 90%;
-    margin: 0 auto;
-    border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
-}
 
 .news-descr {
     background-color: none;
@@ -126,10 +107,6 @@ export default {
 }
 
 @media only screen and (max-width: 500px) {
-    #news-page-box {
-        width: 100%
-    }
-
     .news {
         flex-direction: column;
         width: 96%;
