@@ -10,7 +10,7 @@
                     </div>
                 </div>
                 <div id="stock-box"  >
-                    <StockElement class="stock-element" v-for="stock in stockDataArray"  :chart="stock.chart" :descr="stock.descr" v-bind:key="stock.descr.id"/>
+                    <StockElement class="stock-element" v-for="stock in stockData" :chart="stock.chart" :descr="stock.descr" v-bind:key="stock.descr.id"/>
                 </div>
             </div>
         </div>
@@ -29,13 +29,13 @@ export default {
     },
 
     computed: {
-        stockDataArray() {
-            return this.$store.getters.getStockData;
+        stockData() {
+            let data = this.$store.getters.getStockData;
+            
+            console.log('data2', data)
+            return data;
         }
     }
-
-
-   
 }
 
 </script>
@@ -64,24 +64,6 @@ export default {
     width: 40%;
     margin-left: 20px;
 }
-
-/*
-
-#sentiment-box {
-    border-radius: 10px;
-    background-color: white;
-    width: 100%;
-    height: 15vh;
-}
-
-#news-box {
-    margin-top: 2vh;
-    border-radius: 10px;
-    background-color: white;
-    width: 100%;
-    height: 58vh;
-}
-*/
 
 #stock-box {
     padding-top: 120px;

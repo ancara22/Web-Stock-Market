@@ -24,11 +24,58 @@ export default {
         StockDescriptopnPage
     },
 
+    data() {
+        return {
+            socket: null
+        }
+    },
+
     computed: {
         page() {
             return this.$store.getters.getCurrentPage;
         }
-    }
+    },
+
+    mounted: function() {
+        this.socket = new WebSocket("wss://rcw5iur860.execute-api.us-east-1.amazonaws.com/production/");
+
+        this.socket.onopen = (event) => {
+            console.log('New user connected: ', event);
+            this.socket.send(JSON.stringify({"action": "wsProvideData"}));
+        }
+
+        this.socket.onmessage = (event) => {
+            if(event.data != "") {
+                try {
+                    let data = JSON.parse(event.data);
+
+                    if(event.data.action == "init-connection") {
+                        this.$store.commit('setStockData', data.stockData);
+                    }
+                    this.$store.commit('setStockData', data.stockData);
+                    this.$store.commit('setStockNews', data.stockNews);
+
+                    console.log('Message from the server: ', data);
+                    console.log('first', this.$store.getters.getStockData)
+
+                } catch(err) {
+                    console.log('Server Error: ', err)
+                }
+            }
+            
+        }
+
+        this.socket.onerror = function(event) {
+            console.log('Error: ', event);
+        }
+
+        this.socket.onclose = (event) => {
+            console.log('WebSocket connection closed:', event);
+        };
+
+    },
+
+
 }
 </script>
 
@@ -58,3 +105,4 @@ body {
   }
 }
 </style>
+

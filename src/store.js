@@ -9,8 +9,8 @@ import stockJson from './assets/data.json';
 export default new Vuex.Store({
     state: {
         currentPage: 'stock',
-        stockData: stockJson,
-        newsData: newsJson,
+        stockData: [],
+        newsData: [],
 
         descrPage: {
             id: 1,
@@ -23,7 +23,41 @@ export default new Vuex.Store({
     mutations: {
         changePage(state, newPage) {
             state.currentPage = newPage;
+        },
+
+        setStockData(state, newData) {
+            state.stockData = newData;
+        },
+
+        setStockNews(state, newData) {
+            state.newsData = newData;
+        },
+
+        setDescrPage(state, newId) {
+            let result = state.stockData.filter(item => {
+                return item.descr.id == newId;
+            });
+
+            if(result.length == 1) {
+                
+                state.descrPage = {
+                    id: result[0].id,
+                    chartData: result[0],
+                    newsData: newsJson
+
+                }
+            } else {
+                state.descrPage = {
+                    id: "Undefined",
+                    chartData: {},
+                    newsData: {}
+
+                }
+            }
+            
+            
         }
+
     },
 
     actions: {
