@@ -4,20 +4,17 @@
         <div id="stock-data">
             <div id="stock-descr">
                 <div id="stock-id">
-                    <span>IBM</span>
-                </div>
-                <div id="company-name">
-                    <span>International Business machine</span>
+                    <span><span>Stock Symbol:</span> {{ this.descriptionData.stock.symbol}}</span>
                 </div>
             </div>
             
             <div id="chart-data">
                 <div>
-                    <div id="current-price"><span>Current Price: </span>£233.32</div>
-                    <div id="day-move">+1.23%</div>
+                    <div id="current-price"><span>Current Price: </span>${{ this.descriptionData.stock.meta.chartPreviousClose }}</div>
+                    <div id="day-move">{{ this.calculateChangePercents(this.descriptionData.stock)}}%</div>
                 </div>
                 <div id="chart-box">
-                    <ChartElement :chartData="this.descriptionData.chartData.chart" :detailed="true"/> 
+                    <ChartElement :graph="'close'" :stock="this.descriptionData.stock" :detailed="true" :key="this.descriptionData.stock.symbol"/> 
                 </div>
             </div>
         </div>
@@ -52,7 +49,22 @@ export default {
         descriptionData() {
             return this.$store.getters.getDescrPageData;
         }
+    },
+
+    methods: {
+        calculateChangePercents: function(stock) {
+            let diference = stock.meta.chartPreviousClose - stock.chart.close[0];
+            let percents = (diference/ stock.meta.chartPreviousClose *100).toFixed(2);
+
+            if(percents > 0) {
+                return  "+" + percents;
+            } else {
+                return percents;
+            }
+        }
     }
+
+    
 }
 
 </script>
@@ -114,6 +126,11 @@ canvas {
     font-weight: bold;
     font-size: 1.5rem;
     color: black;
+}
+
+#stock-id span span {
+    font-weight: 100;
+    font-size: 16px;
 }
 
 

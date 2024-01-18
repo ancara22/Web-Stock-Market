@@ -1,18 +1,30 @@
 <template>
     <div class="element-box"  @click="openElementDescriptionPage()">
         <div class="names">
-            <span class="stock-id">{{ this.descr.id }}</span>
-            <span class="stock-name">{{ this.descr.name }}</span>
+            <span class="stock-id">{{ this.stock.symbol }}</span>
         </div>
         <div class="prices">
-            <span class="stock-change">{{ this.descr.change_sum }}</span>
-            <span class="stock-change-percent">{{ this.descr.change_percent }}%</span>
+            <span class="stock-change">{{  this.calculateDiference(this.stock) }}</span>
+            <span class="stock-change-percent">{{  this.calculateChangePercents(this.stock) }}%</span>
         </div>
+        <div class="line"> </div>
         <div class="chart-box">
-            <ChartElement :chartData="chart" :detailed="false"/> 
+            <div class="label">Open</div>
+            <ChartElement :graph="'close'" :stock="this.stock" :detailed="false"/> 
         </div>
+        <div class="line"> </div>
+        <div class="chart-box">
+            <div class="label">High</div>
+            <ChartElement :graph="'high'" :stock="this.stock" :detailed="false"/> 
+        </div>
+        <div class="line"> </div>
+        <div class="chart-box">
+            <div class="label">Volume</div>
+            <ChartElement :graph="'volume'" :stock="this.stock" :detailed="false"/> 
+        </div>
+        <div class="line"> </div>
         <div class="current-price">
-            <span>£{{ this.descr.current_price }}</span>
+            <span>£{{ this.stock.meta.chartPreviousClose }}</span>
         </div>
     </div>
 </template>
@@ -26,18 +38,39 @@ export default {
     components: {
         ChartElement
     },
-
+//:chart="stock.chart" :descr="stock.descr" 
     props: {
-        chart: { type: Array },
-        descr: { type: Object }
+        stock: { type: Object },
     },
 
     methods: {
         openElementDescriptionPage: function() {
             this.$store.commit('changePage', 'descr');
+            this.$store.commit('setDescrPage', this.stock);
         },
 
-        
+        calculateDiference: function(stock) {
+            let diference = (stock.meta.chartPreviousClose - stock.chart.close[0]).toFixed(2);
+
+            if(diference > 0) {
+                return  "+" + diference + "$"
+            } else {
+                return diference;
+            }
+        },
+
+        calculateChangePercents: function(stock) {
+            let diference = stock.meta.chartPreviousClose - stock.chart.close[0];
+            let percents = (diference/ stock.meta.chartPreviousClose *100).toFixed(2);
+
+            if(percents > 0) {
+                return  "+" + percents;
+            } else {
+                return percents;
+            }
+        }
+
+
     }
 }
 </script>
@@ -48,7 +81,9 @@ export default {
     border-bottom: 1px solid rgb(243, 243, 243);
     margin-top: 10px;
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
+    padding: 0 80px 0 80px;
+    
 }
 
 .names {
@@ -67,8 +102,8 @@ export default {
 }
 
 .names {
-    min-width: 150px;
-    max-width: 150px;
+    min-width: 100px;
+    max-width: 100px;
     justify-content: center;
 }
 
@@ -86,8 +121,20 @@ export default {
 .chart-box {
     padding: 5px;
     width: 130px;
-    border-right: 1px solid rgba(192, 192, 192, 0.082);
+    display: flex;
+    margin-right: 50px;
 }
+
+.chart-box div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    margin-right: 15px;
+    color: rgb(170, 170, 170);
+}
+
+
 
 .current-price {
     width: 100px;
@@ -98,6 +145,13 @@ export default {
 
 .current-price span {
     font-weight: 400;
+}
+
+
+.line {
+    height: inherit;
+    border-right: 1px solid rgb(234, 234, 234);
+    width: 1px;
 }
 
 @media only screen and (max-width: 500px) {
@@ -122,4 +176,5 @@ export default {
         width: 6%;
     }
 }
+
 </style>

@@ -36,7 +36,7 @@ export default {
         }
     },
 
-    mounted: function() {
+    beforeMount() {
         this.socket = new WebSocket("wss://rcw5iur860.execute-api.us-east-1.amazonaws.com/production/");
 
         this.socket.onopen = (event) => {
@@ -47,16 +47,20 @@ export default {
         this.socket.onmessage = (event) => {
             if(event.data != "") {
                 try {
+                    console.log('event', event)
                     let data = JSON.parse(event.data);
 
-                    if(event.data.action == "init-connection") {
+                    if(data.action == "init-connection-stock") {
                         this.$store.commit('setStockData', data.stockData);
+                    } else if (data.action == "init-connection-news") {
+                        this.$store.commit('setStockNews', data.stockNews);
+                    } else if(data.action == "INSERT") {
+                        console.log('insert')
+                    } else if(data.action == "UPDATE") {
+                        console.log('update')
                     }
-                    this.$store.commit('setStockData', data.stockData);
-                    this.$store.commit('setStockNews', data.stockNews);
-
+        
                     console.log('Message from the server: ', data);
-                    console.log('first', this.$store.getters.getStockData)
 
                 } catch(err) {
                     console.log('Server Error: ', err)
@@ -74,7 +78,6 @@ export default {
         };
 
     },
-
 
 }
 </script>

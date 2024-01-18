@@ -7,17 +7,17 @@
             <button @click="updateCurrentPage('news')" :class="{ active: this.currentPage=='news' }">News</button>
         </div>
         <div id="nav_stock_container">
-            <div class="nav-stocks-box" v-for="stock in stockDataArray" :key="stock.descr.id" @click="openElementDescriptionPage(stock.descr.id)">
+            <div class="nav-stocks-box" v-for="stock in stockDataArray" :key="stock.symbol" @click="openElementDescriptionPage(stock)">
                 <div class="name">
-                    <span>{{ stock.descr.id }}</span>
+                    <span>{{ stock.symbol }}</span>
                 </div>
                 <div class="current-price">
-                    <span>£{{ stock.descr.current_price }}</span>
+                    <span>£{{ stock.meta.chartPreviousClose }}</span>
                 </div>
                 <div class="low_box">
-                    <span >{{ stock.descr.change_percent }}%</span>
+                    <span >{{ calculateChangePercents(stock) }}%</span>
                     <div class="chart-box">
-                        <ChartElement :chartData="stock.chart" :detailed="false"/> 
+                        <ChartElement :graph="'close'" :stock="stock" :detailed="false"/> 
                     </div>
                 </div>
             </div>
@@ -60,9 +60,10 @@ export default {
 
     methods: {
         
-        openElementDescriptionPage: function(id) {
-            console.log('id', id)
+        openElementDescriptionPage: function(stock) {
             this.updateCurrentPage('descr');
+            this.$store.commit('setDescrPage', stock);
+
         },
 
         updateCurrentPage: function(newPage) {
@@ -70,6 +71,17 @@ export default {
             if(newPage == "stock") this.label = "STOK DATA";
 
             this.$store.commit('changePage', newPage);
+        },
+
+        calculateChangePercents: function(stock) {
+            let diference = stock.meta.chartPreviousClose - stock.chart.close[0];
+            let percents = (diference/ stock.meta.chartPreviousClose *100).toFixed(2);
+
+            if(percents > 0) {
+                return  "+" + percents;
+            } else {
+                return percents;
+            }
         }
     }
 }
@@ -135,11 +147,10 @@ button:hover {
 }
 
 .nav-stocks-box {
-    border-top: 1px solid rgba(128, 128, 128, 0.142);
     background-color: white;
     border-right: 1px solid rgba(207, 207, 207, 0.246);
     width: 150px;
-    min-width: 150px;
+    min-width: 180px;
     height: 60px;
     padding: 5px;
     padding-left: 20px;
@@ -155,7 +166,7 @@ button:hover {
 .chart-box {
     position: absolute;
     top: 20px;
-    right: -20px;
+    right: 10px;
     width: 86px;
 }
 

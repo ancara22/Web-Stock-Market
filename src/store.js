@@ -3,8 +3,8 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
-import newsJson from "./assets/news.json";
-import stockJson from './assets/data.json';
+//import newsJson from "./assets/news.json";
+//import stockJson from './assets/data.json';
 
 export default new Vuex.Store({
     state: {
@@ -13,9 +13,9 @@ export default new Vuex.Store({
         newsData: [],
 
         descrPage: {
-            id: 1,
-            chartData: stockJson[0],
-            newsData: newsJson
+            symbol: "",
+            stock: [],
+            newsData: []
 
         }
     },
@@ -33,29 +33,14 @@ export default new Vuex.Store({
             state.newsData = newData;
         },
 
-        setDescrPage(state, newId) {
-            let result = state.stockData.filter(item => {
-                return item.descr.id == newId;
-            });
+        setDescrPage(state, newStock) {
+                state.descrPage.symbol = newStock.symbol;
+                state.descrPage.stock = newStock;
 
-            if(result.length == 1) {
-                
-                state.descrPage = {
-                    id: result[0].id,
-                    chartData: result[0],
-                    newsData: newsJson
+                state.descrPage.newsData = state.newsData.filter(news => {
+                    return news.symbol == newStock.symbol;
+                });
 
-                }
-            } else {
-                state.descrPage = {
-                    id: "Undefined",
-                    chartData: {},
-                    newsData: {}
-
-                }
-            }
-            
-            
         }
 
     },

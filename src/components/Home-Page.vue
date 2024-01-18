@@ -5,12 +5,14 @@
                 <div class="titles">
                     <h3>Top Day Moves</h3>
                     <div>
-                        <span>Day</span>
+                        <span>Open</span>
+                        <span>High</span>
+                        <span>Volume</span>
                         <span>Price</span>
                     </div>
                 </div>
                 <div id="stock-box"  >
-                    <StockElement class="stock-element" v-for="stock in stockData" :chart="stock.chart" :descr="stock.descr" v-bind:key="stock.descr.id"/>
+                    <StockElement class="stock-element" v-for="stock in stockData" :stock="stock" v-bind:key="stock.symbol"/>
                 </div>
             </div>
         </div>
@@ -32,7 +34,6 @@ export default {
         stockData() {
             let data = this.$store.getters.getStockData;
             
-            console.log('data2', data)
             return data;
         }
     }
@@ -54,7 +55,7 @@ export default {
     height: 75vh;
     width: 90%;
     border-radius: 10px;
-    min-width: 600px;
+    min-width: 1070px;
     margin-bottom: 50px;
     overflow-y: scroll;
 }
@@ -93,17 +94,19 @@ export default {
 .titles h3 {
     margin: 50px 0px 10px 20px;
     text-align: left;
-    padding-left: 40px;
+    padding-left: 70px;
 }
 
 .titles div {
     display: flex;
     justify-content: flex-end;
     margin-bottom: 10px;
+   
 }
 
 .titles div span {
-    margin-right: 15%;
+    width: 16.5%;
+    margin-right: 1%;
     color: rgb(144, 144, 144);
     font-size: 14px;
 }
