@@ -14,7 +14,6 @@ import NewsPage from "./components/News-Page.vue";
 import StockDescriptopnPage from "./components/Stock-Description.vue";
 import '@fortawesome/fontawesome-free/css/all.css';
 
-
 export default {
     name: 'App',
     components: {
@@ -37,11 +36,11 @@ export default {
     },
 
     beforeMount() {
-        this.socket = new WebSocket("wss://rcw5iur860.execute-api.us-east-1.amazonaws.com/production/");
+        this.socket = new WebSocket("wss://8ddccgze1l.execute-api.us-east-1.amazonaws.com/production/");
 
         this.socket.onopen = (event) => {
             console.log('New user connected: ', event);
-            this.socket.send(JSON.stringify({"action": "wsProvideData"}));
+            this.socket.send(JSON.stringify({"action": "provideData"}));
         }
 
         this.socket.onmessage = (event) => {
@@ -54,11 +53,16 @@ export default {
                         this.$store.commit('setStockData', data.stockData);
                     } else if (data.action == "init-connection-news") {
                         this.$store.commit('setStockNews', data.stockNews);
-                    } else if(data.action == "INSERT") {
+                    } else if(data.action == "init-connection-sentiment") {
+                        this.$store.commit('setNewsSentiments', data.newsSentiment);
+                    } else if(data.eventName == "INSERT" || data.eventName == "UPDATE") {
+                        if(data.action == "update-stock-data") {
+                            this.$store.commit('updateStockElement', data.data);
+                        } else if(data.action == "update-stock-news") {
+                            this.$store.commit('updateStockNewsElement', data.data);
+                        }
                         console.log('insert')
-                    } else if(data.action == "UPDATE") {
-                        console.log('update')
-                    }
+                    } 
         
                     console.log('Message from the server: ', data);
 

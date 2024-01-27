@@ -12,17 +12,19 @@ export default {
     props: {
         stock: { type: Object },      //Chart data
         detailed: { type: Boolean },      //True to show the graph scales, false to show minumum details
-        graph: { type: String }
+        graph: { type: String },
+        coloredChart: { type: Boolean }
     },
 
     data() {
         return {
             chart: null,        //The future chart object
             displayGrid: true, //Chart detailing controler
-            pointRadoius: 2,     //Chart points size
-            borderWidth: 3,
+            pointRadoius: 1,     //Chart points size
+            borderWidth: 2,
             chartData: [],
-            timestamps: []
+            timestamps: [],
+            color: ''
         }
     },
 
@@ -36,6 +38,17 @@ export default {
             this.pointRadoius = 0
             this.borderWidth = 1
         }
+
+        let tempData = Object.values(this.chartData);
+
+        if(tempData[0] < tempData[tempData.length -1] && this.coloredChart){
+            this.color = 'rgb(3, 193, 3)'
+        } else if(tempData[0] > tempData[tempData.length -1] && this.coloredChart) {
+            this.color = 'red'
+        } else {
+            this.color = 'rgb(3, 193, 3)'
+        }
+
 
         this.renderChart(); //Render the chart
     },
@@ -53,7 +66,7 @@ export default {
                     datasets: [{
                             label: 'Stock Price',
                             data: Object.values(this.chartData),
-                            borderColor: 'rgb(3, 193, 3)',
+                            borderColor: this.color,
                             borderWidth: this.borderWidth,
                             fill: false,
                             pointRadius: this.pointRadoius,

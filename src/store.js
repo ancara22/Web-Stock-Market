@@ -11,6 +11,7 @@ export default new Vuex.Store({
         currentPage: 'stock',
         stockData: [],
         newsData: [],
+        sentimentsData: [],
 
         descrPage: {
             symbol: "",
@@ -33,6 +34,10 @@ export default new Vuex.Store({
             state.newsData = newData;
         },
 
+        setNewsSentiments(state, newSentiments) {
+            state.sentimentsData = newSentiments;
+        },
+
         setDescrPage(state, newStock) {
                 state.descrPage.symbol = newStock.symbol;
                 state.descrPage.stock = newStock;
@@ -40,8 +45,28 @@ export default new Vuex.Store({
                 state.descrPage.newsData = state.newsData.filter(news => {
                     return news.symbol == newStock.symbol;
                 });
+        },
 
-        }
+        updateStockElement(state, newData) {
+            const symbol = newData.symbol;
+            const index = state.stockData.findIndex(element => element.symbol === symbol);
+            
+            if (index !== -1) {
+                //Update the value of the element in the array
+                state.stockData[index] = newData;
+            } else {
+                state.stockData.push(newData);
+            }
+        },
+
+        updateStockNewsElement(state, newData) {
+            const index = state.newsData.findIndex(element => element.title === newData.title);
+            
+            if (index == -1) {
+                state.stockData.push(newData);
+            }
+        },
+
 
     },
 
@@ -54,5 +79,6 @@ export default new Vuex.Store({
         getStockData: state => state.stockData,
         getStockNewsAll: state => state.newsData,
         getDescrPageData: state => state.descrPage,
+        getAllNewsSentiments: state => state.sentimentsData
     }
 });

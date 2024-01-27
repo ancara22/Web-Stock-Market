@@ -4,23 +4,23 @@
             <span class="stock-id">{{ this.stock.symbol }}</span>
         </div>
         <div class="prices">
-            <span class="stock-change">{{  this.calculateDiference(this.stock) }}</span>
-            <span class="stock-change-percent">{{  this.calculateChangePercents(this.stock) }}%</span>
+            <span class="stock-change" :style="{ color: textColor }">{{  this.calculateDiference(this.stock) }}</span>
+            <span class="stock-change-percent" :style="{ color: textColor }">{{  this.calculateChangePercents(this.stock) }}%</span>
         </div>
         <div class="line"> </div>
         <div class="chart-box">
             <div class="label">Open</div>
-            <ChartElement :graph="'close'" :stock="this.stock" :detailed="false"/> 
+            <ChartElement :graph="'close'" :stock="this.stock" :detailed="false" :coloredChart="true"/> 
         </div>
         <div class="line"> </div>
         <div class="chart-box">
             <div class="label">High</div>
-            <ChartElement :graph="'high'" :stock="this.stock" :detailed="false"/> 
+            <!-- <ChartElement :graph="'high'" :stock="this.stock" :detailed="false"/> -->
         </div>
         <div class="line"> </div>
         <div class="chart-box">
             <div class="label">Volume</div>
-            <ChartElement :graph="'volume'" :stock="this.stock" :detailed="false"/> 
+            <ChartElement :graph="'volume'" :stock="this.stock" :detailed="false" :coloredChart="false"/> 
         </div>
         <div class="line"> </div>
         <div class="current-price">
@@ -38,7 +38,14 @@ export default {
     components: {
         ChartElement
     },
-//:chart="stock.chart" :descr="stock.descr" 
+
+    data() {
+        return {
+            color: 'rgb(3, 193, 3)',
+            textColor: 'rgb(3, 193, 3)'
+        }
+    },
+
     props: {
         stock: { type: Object },
     },
@@ -53,8 +60,12 @@ export default {
             let diference = (stock.meta.chartPreviousClose - stock.chart.close[0]).toFixed(2);
 
             if(diference > 0) {
+                this.color = 'rgb(3, 193, 3)';
+                this.textColor = 'rgb(3, 193, 3)';
                 return  "+" + diference + "$"
             } else {
+                this.textColor = 'red';
+                this.color = 'red';
                 return diference;
             }
         },

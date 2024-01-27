@@ -15,9 +15,9 @@
                     <span>£{{ stock.meta.chartPreviousClose }}</span>
                 </div>
                 <div class="low_box">
-                    <span >{{ calculateChangePercents(stock) }}%</span>
+                    <span :style="{ color: (calculateChangePercents(stock)).includes('+') ? 'green' : 'red' }" >{{ calculateChangePercents(stock) }}%</span>
                     <div class="chart-box">
-                        <ChartElement :graph="'close'" :stock="stock" :detailed="false"/> 
+                        <ChartElement :graph="'close'" :stock="stock" :detailed="false" :coloredChart="true"/> 
                     </div>
                 </div>
             </div>
@@ -37,7 +37,8 @@ export default {
 
     data() {
         return {
-            label: ''
+            label: '',
+            textColor: ''
         }
     },
 
@@ -56,6 +57,8 @@ export default {
         if(this.currentPage == "stock") 
                 this.label = "STOCK MARKET";
             else this.label = "MARKET NEWS";
+
+        
     },
 
     methods: {
@@ -68,7 +71,7 @@ export default {
 
         updateCurrentPage: function(newPage) {
             newPage == "stock" ? this.label = "STOCK MARKET" : this.label =  "MARKET NEWS";
-            if(newPage == "stock") this.label = "STOK DATA";
+            if(newPage == "stock") this.label = "STOCK DATA";
 
             this.$store.commit('changePage', newPage);
         },
@@ -78,10 +81,14 @@ export default {
             let percents = (diference/ stock.meta.chartPreviousClose *100).toFixed(2);
 
             if(percents > 0) {
+                this.textColor = 'rgb(3, 193, 3)';
                 return  "+" + percents;
             } else {
+                this.textColor = 'red';
                 return percents;
             }
+
+    
         }
     }
 }
