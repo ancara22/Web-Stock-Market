@@ -6,7 +6,6 @@
                     <h3>Top Day Moves</h3>
                     <div>
                         <span>Open</span>
-                        <span>High</span>
                         <span>Volume</span>
                         <span>Price</span>
                     </div>
@@ -106,7 +105,7 @@ export default {
 
 .titles div span {
     width: 16.5%;
-    margin-right: 1%;
+    margin-right: 4%;
     color: rgb(144, 144, 144);
     font-size: 14px;
 }

@@ -9,9 +9,9 @@
         </div>
         <div class="sentiment-box">
             <div class="time_published"><span>Published:</span>{{ formatTime(this.news.time_published) }}</div>
-            <span class="sentiment">POSITIVE</span>
+            <span class="sentiment"> {{ this.sentiment }}</span>
             <div class="smile">
-                <i class="fa fa-smile"></i>
+                <i :class="this.emodji"></i>
             </div>
         </div>
     </div>
@@ -29,6 +29,18 @@ export default {
             type: Object
         }
     },
+
+    mounted: function() {
+        this.getSentiment();
+    },
+
+    data() {
+        return {
+            sentiment: '',
+            emodji: '',
+            sentiment_class: 'green'
+        }
+    },
    
     methods: {
         openUrl: function() {
@@ -44,7 +56,22 @@ export default {
             const formattedDateTime = `${month}-${day}-${year} ${hour}:${minute}`;
 
             return formattedDateTime;
+        },
+
+        getSentiment() {
+            this.sentiment = this.$store.getters.getSentiment(this.news.title).sentiment;
+
+            if(this.sentiment  == "Negative") {
+                this.emodji = 'fa-solid fa-face-frown back_red';
+            } else if(this.sentiment  == "Positive") {
+                this.emodji = 'fa fa-smile back_green';
+            } else {
+                this.emodji = 'fa-solid fa-face-meh back_gray';
+            }
+
+
         }
+
     }
 }
 </script>
@@ -112,7 +139,6 @@ export default {
 
 .sentiment-box .smile i {
     font-size: 20px;
-    color: rgb(1, 212, 1);
 }
 
 .short_body {
@@ -127,6 +153,18 @@ export default {
         right: 360px;
         font-size: 14px;
         color: rgb(166, 166, 166);
+}
+
+.back_green {
+    color: rgb(1, 212, 1);
+}
+
+.back_red {
+    color: rgb(251, 32, 32);
+}
+
+.back_gray {
+    color: rgb(169, 169, 169);
 }
 
 @media only screen and (max-width: 500px) {
@@ -155,7 +193,6 @@ export default {
     .news:hover {
         transform: none;
     }
-
 
 }
 </style>

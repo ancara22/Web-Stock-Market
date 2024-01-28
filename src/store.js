@@ -43,7 +43,7 @@ export default new Vuex.Store({
                 state.descrPage.stock = newStock;
 
                 state.descrPage.newsData = state.newsData.filter(news => {
-                    return news.symbol == newStock.symbol;
+                    return (news.symbol).toLowerCase() == (newStock.symbol).toLowerCase();
                 });
         },
 
@@ -79,6 +79,31 @@ export default new Vuex.Store({
         getStockData: state => state.stockData,
         getStockNewsAll: state => state.newsData,
         getDescrPageData: state => state.descrPage,
-        getAllNewsSentiments: state => state.sentimentsData
+        getAllNewsSentiments: state => state.sentimentsData,
+
+        getSentiment: state => title => {
+            return state.sentimentsData.filter(sentiment => {
+                return sentiment.title == title;
+            })[0];
+        },
+
+        getAllSymbolSentiment: state => symbol => {
+            let news = state.newsData.filter(news => {
+                return news.symbol.toLowerCase() == symbol.toLowerCase();
+            });
+
+            let sentimentArray = [];
+
+            news.forEach(element => {
+                let sentiment = state.sentimentsData.filter(sentiment => {
+                    return sentiment.title == element.title;
+                })[0];
+
+                sentimentArray.push(sentiment);
+            })
+
+                return sentimentArray;
+               
+        }
     }
 });

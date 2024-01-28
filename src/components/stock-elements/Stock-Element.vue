@@ -12,11 +12,7 @@
             <div class="label">Open</div>
             <ChartElement :graph="'close'" :stock="this.stock" :detailed="false" :coloredChart="true"/> 
         </div>
-        <div class="line"> </div>
-        <div class="chart-box">
-            <div class="label">High</div>
-            <!-- <ChartElement :graph="'high'" :stock="this.stock" :detailed="false"/> -->
-        </div>
+        
         <div class="line"> </div>
         <div class="chart-box">
             <div class="label">Volume</div>

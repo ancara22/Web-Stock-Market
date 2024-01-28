@@ -21,7 +21,11 @@
 
         <!-- Emotions and predictions boxes -->
         <div id="analys-box">
-            <div id="emotions-box"></div>
+            <div id="emotions-box">
+                <i :class="this.emodji"></i>
+                <span>Stock sentiment: {{ this.sentiment }}</span>
+                <p>{{ this.sentimentsCounter }}</p>
+            </div>
             <div id="prediction-box"></div>
         </div>
         
@@ -45,6 +49,18 @@ export default {
         NewsElement
     },
 
+    data() {
+        return {
+            sentimentsCounter: '',
+            sentiment: '---',
+            emodji: ''
+        }
+    },
+
+    mounted: function() {
+        this.getAllSymbolSentiment();
+    },
+
     computed: {
         descriptionData() {
             return this.$store.getters.getDescrPageData;
@@ -61,6 +77,39 @@ export default {
             } else {
                 return percents;
             }
+        },
+
+        getAllSymbolSentiment() {
+            let newsSentiments = this.$store.getters.getAllSymbolSentiment(this.descriptionData.stock.symbol);
+
+            console.log('newsSentiments', newsSentiments);
+
+            let sentimentsCounter = [0, 0, 0];
+           
+            newsSentiments.forEach(element => {
+                if(element.sentiment == "Positive") {
+                    sentimentsCounter[0]++;
+                } else if(element.sentiment == "Negative") {
+                    sentimentsCounter[1]++;
+                } else {
+                    sentimentsCounter[2]++;
+                }
+            });
+
+            this.sentimentsCounter = "Positive: " +  sentimentsCounter[0] + "   Negative: " +  sentimentsCounter[1] + "\t   Neutral: " + sentimentsCounter[2];
+
+            if(sentimentsCounter[0] > sentimentsCounter[1] && sentimentsCounter[0] > sentimentsCounter[2] ) {
+                this.sentiment = "Positive";
+                this.emodji = 'fa fa-smile back_green';
+            } else  if(sentimentsCounter[1] > sentimentsCounter[0] && sentimentsCounter[1] > sentimentsCounter[2] ) {
+                this.sentiment = "Negative";
+                this.emodji = 'fa-solid fa-face-frown back_red';
+            } else {
+                this.sentiment = "Neutral";
+                this.emodji = 'fa-solid fa-face-meh back_gray';
+            }
+            
+    
         }
     }
 
@@ -175,4 +224,63 @@ canvas {
     justify-content: center;
    
 }
+
+.back_green {
+    color: rgb(1, 212, 1);
+}
+
+.back_red {
+    color: rgb(251, 32, 32);
+}
+
+.back_gray {
+    color: rgb(169, 169, 169);
+}
+
+#analys-box {
+    width: 87%;
+    height: 250px;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+#emotions-box {
+    background-color: white;
+    width: 30%;
+    height: inherit;
+    border-radius: 5px;
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#prediction-box {
+    background-color: white;
+    width: 64%;
+    height: inherit;
+    border-radius: 5px;
+    padding: 15px;
+}
+
+#emotions-box i {
+    font-size: 74px;
+    margin: 20px;
+
+}
+
+#emotions-box span {
+    font-size: 24px;
+    font-weight: bold;
+    color: rgb(73, 73, 73);
+}
+
+#emotions-box p {
+    color: rgb(190, 190, 190);
+
+}
+
 </style>
