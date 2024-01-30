@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+        <div id="pageLoader" v-if="isPageLoading"></div>
         <NavigationBar/>
         <HomePage v-if="page=='stock'"/>
         <NewsPage v-else-if="page=='news'"/>
@@ -25,7 +26,8 @@ export default {
 
     data() {
         return {
-            socket: null
+            socket: null,
+            isPageLoading: true
         }
     },
 
@@ -46,7 +48,7 @@ export default {
         this.socket.onmessage = (event) => {
             if(event.data != "") {
                 try {
-                    console.log('event', event)
+                   // console.log('event', event)
                     let data = JSON.parse(event.data);
 
                     if(data.action == "init-connection-stock") {
@@ -55,6 +57,8 @@ export default {
                         this.$store.commit('setStockNews', data.stockNews);
                     } else if(data.action == "init-connection-sentiment") {
                         this.$store.commit('setNewsSentiments', data.newsSentiment);
+                    } else if(data.action == "init-connection-prediction") {
+                        this.$store.commit('setStockPrediction', data.stockPrediction);
                     } else if(data.eventName == "INSERT" || data.eventName == "UPDATE") {
                         if(data.action == "update-stock-data") {
                             this.$store.commit('updateStockElement', data.data);
@@ -63,8 +67,12 @@ export default {
                         }
                         console.log('insert')
                     } 
-        
-                    console.log('Message from the server: ', data);
+
+                    setTimeout(() => {
+                        this.isPageLoading = false;
+                    }, 500)
+    
+                    //console.log('Message from the server: ', data);
 
                 } catch(err) {
                     console.log('Server Error: ', err)
@@ -101,8 +109,20 @@ body {
     width: 100%;
     min-height: 100vh;
     height: max-content;
+}
 
-
+#pageLoader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("../public/loading-back2.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    z-index: 99999;
 }
 
 @media only screen and (max-width: 500px) {

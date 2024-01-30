@@ -38,7 +38,6 @@ export default {
         return {
             sentiment: '',
             emodji: '',
-            sentiment_class: 'green'
         }
     },
    

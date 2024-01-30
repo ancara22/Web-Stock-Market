@@ -12,11 +12,13 @@ export default new Vuex.Store({
         stockData: [],
         newsData: [],
         sentimentsData: [],
+        stockPrediction: [],
 
         descrPage: {
             symbol: "",
             stock: [],
-            newsData: []
+            newsData: [],
+            prediction: []
 
         }
     },
@@ -38,6 +40,10 @@ export default new Vuex.Store({
             state.sentimentsData = newSentiments;
         },
 
+        setStockPrediction(state, newPredictions) {
+            state.stockPrediction = newPredictions;
+        },
+
         setDescrPage(state, newStock) {
                 state.descrPage.symbol = newStock.symbol;
                 state.descrPage.stock = newStock;
@@ -45,6 +51,10 @@ export default new Vuex.Store({
                 state.descrPage.newsData = state.newsData.filter(news => {
                     return (news.symbol).toLowerCase() == (newStock.symbol).toLowerCase();
                 });
+
+                state.descrPage.prediction = state.stockPrediction.filter(data => {
+                    return (data.symbol).toLowerCase() == (newStock.symbol).toLowerCase();
+                })[0];
         },
 
         updateStockElement(state, newData) {
@@ -80,7 +90,7 @@ export default new Vuex.Store({
         getStockNewsAll: state => state.newsData,
         getDescrPageData: state => state.descrPage,
         getAllNewsSentiments: state => state.sentimentsData,
-
+    
         getSentiment: state => title => {
             return state.sentimentsData.filter(sentiment => {
                 return sentiment.title == title;
@@ -104,6 +114,8 @@ export default new Vuex.Store({
 
                 return sentimentArray;
                
-        }
+        },
+
+        
     }
 });

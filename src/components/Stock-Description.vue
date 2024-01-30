@@ -1,10 +1,10 @@
 <template>
-    <div id="descr-container">
+    <div id="descr-container" :key="this.descriptionData.stock.symbol">
         <!-- Stock data, chart and prices -->
         <div id="stock-data">
             <div id="stock-descr">
                 <div id="stock-id">
-                    <span><span>Stock Symbol:</span> {{ this.descriptionData.stock.symbol}}</span>
+                    <span><span>Stock Symbol:</span> {{ this.descriptionData.stock.symbol }}</span>
                 </div>
             </div>
             
@@ -20,13 +20,15 @@
         </div>
 
         <!-- Emotions and predictions boxes -->
-        <div id="analys-box">
-            <div id="emotions-box">
+        <div id="analys-box" :key="this.descriptionData.stock.symbol">
+            <div id="emotions-box" >
                 <i :class="this.emodji"></i>
                 <span>Stock sentiment: {{ this.sentiment }}</span>
                 <p>{{ this.sentimentsCounter }}</p>
             </div>
-            <div id="prediction-box"></div>
+            <div id="prediction-box">
+                <canvas ref="predictionChart" ></canvas>
+            </div>
         </div>
         
         <!-- News box -->
@@ -40,6 +42,7 @@
 <script>
 import ChartElement from "./stock-elements/Chart.vue";
 import NewsElement from "./stock-elements/News-Element.vue"
+import Chart from 'chart.js/auto';
 
 
 export default {
@@ -53,18 +56,31 @@ export default {
         return {
             sentimentsCounter: '',
             sentiment: '---',
-            emodji: ''
+            emodji: '',
+            chart: null,
+            update: true
         }
     },
 
     mounted: function() {
         this.getAllSymbolSentiment();
+        this.createPredictionChart();
     },
 
     computed: {
         descriptionData() {
             return this.$store.getters.getDescrPageData;
-        }
+        },
+
+    },
+
+    watch: {
+        'descriptionData.stock.symbol': function () {
+            this.getAllSymbolSentiment();
+            this.createPredictionChart();
+          
+        },
+
     },
 
     methods: {
@@ -82,8 +98,6 @@ export default {
         getAllSymbolSentiment() {
             let newsSentiments = this.$store.getters.getAllSymbolSentiment(this.descriptionData.stock.symbol);
 
-            console.log('newsSentiments', newsSentiments);
-
             let sentimentsCounter = [0, 0, 0];
            
             newsSentiments.forEach(element => {
@@ -98,18 +112,93 @@ export default {
 
             this.sentimentsCounter = "Positive: " +  sentimentsCounter[0] + "   Negative: " +  sentimentsCounter[1] + "\t   Neutral: " + sentimentsCounter[2];
 
-            if(sentimentsCounter[0] > sentimentsCounter[1] && sentimentsCounter[0] > sentimentsCounter[2] ) {
-                this.sentiment = "Positive";
-                this.emodji = 'fa fa-smile back_green';
-            } else  if(sentimentsCounter[1] > sentimentsCounter[0] && sentimentsCounter[1] > sentimentsCounter[2] ) {
-                this.sentiment = "Negative";
-                this.emodji = 'fa-solid fa-face-frown back_red';
+            let newSentiment, newEmodji;
+
+            if(sentimentsCounter[0] > sentimentsCounter[1]  ) {
+                newSentiment = "Positive";
+                newEmodji = 'fa fa-smile back_green';
+            } else  if(sentimentsCounter[1] > sentimentsCounter[0]) {
+                newSentiment = "Negative";
+                newEmodji = 'fa-solid fa-face-frown back_red';
             } else {
-                this.sentiment = "Neutral";
-                this.emodji = 'fa-solid fa-face-meh back_gray';
+                newSentiment = "Neutral";
+                newEmodji = 'fa-solid fa-face-meh back_gray';
             }
-            
     
+            this.sentiment = newSentiment;
+            this.emodji = newEmodji;
+        },
+
+        createPredictionChart() {
+            const ctx = this.$refs.predictionChart.getContext('2d');
+            
+            let realData = this.descriptionData.stock.chart['close'];
+            let predictionMean = this.descriptionData.prediction.mean;
+        
+            let prediction10th = this.descriptionData.prediction.low;
+            let prediction90th = this.descriptionData.prediction.high;
+
+            console.log('first', predictionMean)
+
+            //Combine real and predicted data
+            const labels = Array.from({ length: realData.length + predictionMean.length }, (_, i) => `Day ${i + 1}`);
+
+            const data = {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Real Stock Data',
+                        borderColor: 'green',
+                        data: realData,
+                        fill: true,
+                        backgroundColor: "rgba(3, 226, 3, 0.21)",
+                        borderWidth: 1,
+                        pointRadius: 0,
+                    },
+                    {
+                        label: 'Mean',
+                        borderColor: 'gray',
+                        data: Array(realData.length).fill(null).concat(predictionMean),
+                        fill: false,
+                        borderWidth: 1,
+                        pointRadius: 0,
+                        yAxisID: 'prediction-axe'
+                    },
+                    {
+                        label: 'Low',
+                        borderColor: 'orange',
+                        data: Array(realData.length).fill(null).concat(prediction10th),
+                        fill: false,
+                        borderWidth: 1,
+                        pointRadius: 0,
+                        yAxisID: 'prediction-axe'
+                    },
+                    {
+                        label: 'High',
+                        borderColor: 'blue',
+                        data: [...Array(realData.length).fill(null), ...prediction90th],
+                        fill: false,
+                        borderWidth: 1,
+                        pointRadius: 0,
+                        yAxisID: 'prediction-axe'
+                    }
+                ],
+            };
+
+            //Chart configuration
+            const options = {
+                responsive: true,
+                maintainAspectRatio: false,
+            }
+
+
+            //Create the chart
+            this.chart = new Chart(ctx, {
+                type: 'line',
+                data: data,
+                options: options,
+            });
+
         }
     }
 
@@ -282,5 +371,6 @@ canvas {
     color: rgb(190, 190, 190);
 
 }
+
 
 </style>
