@@ -32,23 +32,28 @@ export default {
     },
 
     computed: {
+        //Get tge current page
         page() {
             return this.$store.getters.getCurrentPage;
         }
     },
 
+    //Set the socket before component mounting
     beforeMount() {
+        //Set the socket
         this.socket = new WebSocket("wss://8ddccgze1l.execute-api.us-east-1.amazonaws.com/production/");
 
+        //Set the onopen event handler
         this.socket.onopen = (event) => {
             console.log('New user connected: ', event);
             this.socket.send(JSON.stringify({"action": "provideData"}));
         }
 
+        //Set the on message event handler
         this.socket.onmessage = (event) => {
             if(event.data != "") {
                 try {
-                   // console.log('event', event)
+                    //Set the acctions in dependence of type/action of received data
                     let data = JSON.parse(event.data);
 
                     if(data.action == "init-connection-stock") {
@@ -68,29 +73,27 @@ export default {
                         console.log('insert')
                     } 
 
+                    //Remove the loading screen
                     setTimeout(() => {
                         this.isPageLoading = false;
                     }, 500)
-    
-                    //console.log('Message from the server: ', data);
 
                 } catch(err) {
                     console.log('Server Error: ', err)
                 }
             }
-            
         }
 
+        //Set the on error event handler
         this.socket.onerror = function(event) {
             console.log('Error: ', event);
         }
 
+        //Set the on close event handler
         this.socket.onclose = (event) => {
             console.log('WebSocket connection closed:', event);
         };
-
     },
-
 }
 </script>
 

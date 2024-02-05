@@ -25,7 +25,6 @@
     </div>
 </template>
 
-
 <script>
 import ChartElement from "./stock-elements/Chart.vue";
 
@@ -37,38 +36,39 @@ export default {
 
     data() {
         return {
-            label: '',
-            textColor: ''
+            label: '',  //Navigation top label
+            textColor: ''   //Text color
         }
     },
 
     computed: {
+        //Get current page from store
         currentPage() {
             return this.$store.getters.getCurrentPage;
         },
 
+        //Get stock data from the store
         stockDataArray() {
             return this.$store.getters.getStockData;
         }
     },
-
-
+    
     mounted: function() {
+        //Set the nav label
         if(this.currentPage == "stock") 
-                this.label = "STOCK MARKET";
-            else this.label = "MARKET NEWS";
-
-        
+            this.label = "STOCK MARKET";
+        else this.label = "MARKET NEWS";
     },
 
     methods: {
-        
+        //Open element description page
         openElementDescriptionPage: function(stock) {
             this.updateCurrentPage('descr');
             this.$store.commit('setDescrPage', stock);
 
         },
 
+        //Update current page
         updateCurrentPage: function(newPage) {
             newPage == "stock" ? this.label = "STOCK MARKET" : this.label =  "MARKET NEWS";
             if(newPage == "stock") this.label = "STOCK DATA";
@@ -76,10 +76,12 @@ export default {
             this.$store.commit('changePage', newPage);
         },
 
+        //Calculate day stock change diference
         calculateChangePercents: function(stock) {
             let diference = stock.meta.chartPreviousClose - stock.chart.close[0];
             let percents = (diference/ stock.meta.chartPreviousClose *100).toFixed(2);
 
+            //Set the text/chart colors
             if(percents > 0) {
                 this.textColor = 'rgb(3, 193, 3)';
                 return  "+" + percents;
@@ -87,8 +89,6 @@ export default {
                 this.textColor = 'red';
                 return percents;
             }
-
-    
         }
     }
 }

@@ -7,7 +7,6 @@
                     <span><span>Stock Symbol:</span> {{ this.descriptionData.stock.symbol }}</span>
                 </div>
             </div>
-            
             <div id="chart-data">
                 <div>
                     <div id="current-price"><span>Current Price: </span>${{ this.descriptionData.stock.meta.chartPreviousClose }}</div>
@@ -35,7 +34,6 @@
         <div id="news-box">
             <NewsElement v-for="news in descriptionData.newsData"  :news="news" :key="news.id"/>    
         </div>
-
     </div>
 </template>
 
@@ -43,7 +41,6 @@
 import ChartElement from "./stock-elements/Chart.vue";
 import NewsElement from "./stock-elements/News-Element.vue"
 import Chart from 'chart.js/auto';
-
 
 export default {
     name: "StockDescriptopnPage",
@@ -54,36 +51,42 @@ export default {
 
     data() {
         return {
-            sentimentsCounter: '',
-            sentiment: '---',
-            emodji: '',
-            chart: null,
-            update: true
+            sentimentsCounter: '',  //Sentiments counter
+            sentiment: '---',       //Stock Sentiment
+            emodji: '',             //Stock emoji
+            chart: null,            //Stock chart
+            update: true            //Update label triger
         }
     },
 
     mounted: function() {
+        //Get all stock sentiments
         this.getAllSymbolSentiment();
+
+        //Get data and create stock prediction chart
         this.createPredictionChart();
     },
 
     computed: {
+        //Get stock description data from the store
         descriptionData() {
             return this.$store.getters.getDescrPageData;
         },
-
     },
-
+   
     watch: {
+        //Watch the updationg of the description page content/by stock symbol
         'descriptionData.stock.symbol': function () {
+            //Get all stock sentiments
             this.getAllSymbolSentiment();
-            this.createPredictionChart();
-          
-        },
 
+            //Get data and create stock prediction chart
+            this.createPredictionChart();
+        },
     },
 
     methods: {
+        //Calculate stock day move change percents
         calculateChangePercents: function(stock) {
             let diference = stock.meta.chartPreviousClose - stock.chart.close[0];
             let percents = (diference/ stock.meta.chartPreviousClose *100).toFixed(2);
@@ -95,11 +98,15 @@ export default {
             }
         },
 
+        //Get all stock sentiments by symbol
         getAllSymbolSentiment() {
+            //Sentiments data
             let newsSentiments = this.$store.getters.getAllSymbolSentiment(this.descriptionData.stock.symbol);
-
+            
+            //Sentiments counter
             let sentimentsCounter = [0, 0, 0];
            
+            //Count the stock sentiments
             newsSentiments.forEach(element => {
                 if(element.sentiment == "Positive") {
                     sentimentsCounter[0]++;
@@ -110,8 +117,10 @@ export default {
                 }
             });
 
+             //Set the stock sentiment accoudimg to the counter
             this.sentimentsCounter = "Positive: " +  sentimentsCounter[0] + "   Negative: " +  sentimentsCounter[1] + "\t   Neutral: " + sentimentsCounter[2];
 
+            //Set news sentiments and emoji
             let newSentiment, newEmodji;
 
             if(sentimentsCounter[0] > sentimentsCounter[1]  ) {
@@ -129,20 +138,22 @@ export default {
             this.emodji = newEmodji;
         },
 
+        //Create prediction charts
         createPredictionChart() {
+            //Get output box
             const ctx = this.$refs.predictionChart.getContext('2d');
             
+            //Get data
             let realData = this.descriptionData.stock.chart['close'];
             let predictionMean = this.descriptionData.prediction.mean;
         
             let prediction10th = this.descriptionData.prediction.low;
             let prediction90th = this.descriptionData.prediction.high;
 
-            console.log('first', predictionMean)
-
             //Combine real and predicted data
             const labels = Array.from({ length: realData.length + predictionMean.length }, (_, i) => `Day ${i + 1}`);
 
+            //Set chart datasets
             const data = {
                 labels: labels,
                 datasets: [
@@ -191,18 +202,14 @@ export default {
                 maintainAspectRatio: false,
             }
 
-
             //Create the chart
             this.chart = new Chart(ctx, {
                 type: 'line',
                 data: data,
                 options: options,
             });
-
         }
-    }
-
-    
+    }  
 }
 
 </script>
@@ -215,7 +222,6 @@ export default {
     justify-content: center;
     align-items: center;
 }
-
 
 #stock-data {
     width: 80%;
@@ -246,9 +252,7 @@ canvas {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 40px;
-
-    
+    margin-bottom: 40px; 
 }
 
 #company-name {
@@ -256,8 +260,6 @@ canvas {
     font-size: 1.1rem;
     color: rgb(123, 123, 123);
 }
-
-
 
 #stock-id {
     margin-right: 20px;
@@ -271,12 +273,10 @@ canvas {
     font-size: 16px;
 }
 
-
 #chart-data div:first-child {
     display: flex;
     justify-content: center;
     align-items: center;
-    
 }
 
 #current-price {
@@ -284,15 +284,13 @@ canvas {
     margin-bottom: 40px;
     font-weight: bolder;
     color: rgb(0, 0, 0);
-   
 }
 
 #current-price span {
     font-size: 1rem;
     color: rgb(123, 123, 123);
     margin-right: 10px;
-    font-weight: 100;
-    
+    font-weight: 100;  
 }
 
 #day-move {
@@ -310,8 +308,7 @@ canvas {
     margin-top: 30px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-   
+    justify-content: center; 
 }
 
 .back_green {
@@ -358,7 +355,6 @@ canvas {
 #emotions-box i {
     font-size: 74px;
     margin: 20px;
-
 }
 
 #emotions-box span {
@@ -369,7 +365,6 @@ canvas {
 
 #emotions-box p {
     color: rgb(190, 190, 190);
-
 }
 
 

@@ -30,6 +30,7 @@ export default {
     },
 
     computed: {
+        //Get Stock Data
         stockData() {
             let data = this.$store.getters.getStockData;
             

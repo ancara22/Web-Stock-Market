@@ -35,26 +35,29 @@ export default {
         ChartElement
     },
 
-    data() {
-        return {
-            color: 'rgb(3, 193, 3)',
-            textColor: 'rgb(3, 193, 3)'
-        }
-    },
-
     props: {
         stock: { type: Object },
     },
 
+    data() {
+        return {
+            color: 'rgb(3, 193, 3)',    //Chart color
+            textColor: 'rgb(3, 193, 3)' //Text color
+        }
+    },
+
     methods: {
+        //Open Element Description page event handler
         openElementDescriptionPage: function() {
             this.$store.commit('changePage', 'descr');
             this.$store.commit('setDescrPage', this.stock);
         },
 
+        //Calculate stock move diference
         calculateDiference: function(stock) {
             let diference = (stock.meta.chartPreviousClose - stock.chart.close[0]).toFixed(2);
 
+            //Set the colors
             if(diference > 0) {
                 this.color = 'rgb(3, 193, 3)';
                 this.textColor = 'rgb(3, 193, 3)';
@@ -66,6 +69,7 @@ export default {
             }
         },
 
+        //Calculate move diference in percents
         calculateChangePercents: function(stock) {
             let diference = stock.meta.chartPreviousClose - stock.chart.close[0];
             let percents = (diference/ stock.meta.chartPreviousClose *100).toFixed(2);
@@ -76,8 +80,6 @@ export default {
                 return percents;
             }
         }
-
-
     }
 }
 </script>
@@ -165,7 +167,6 @@ export default {
     .names {
         min-width: 20%;
     }
-
 
     .prices {
         margin-left: 2%;

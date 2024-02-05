@@ -13,14 +13,9 @@ export default {
     components: {
         NewsElement
     },
-    data() {
-        return {
-            news_api_key: "cmc3uq9r01qpbvb54f90cmc3uq9r01qpbvb54f9g",
-            news_url: `https://finnhub.io/api/v1/news?category=${this.news_api_key}`, //General News
-        }
-    },
 
     computed: {
+        //Get news data from the store
         newsData() {
             return this.$store.getters.getStockNewsAll;
         }
@@ -42,12 +37,9 @@ export default {
     align-items: center;
 }
 
-
 @media only screen and (max-width: 500px) {
     #news-page-box {
         width: 100%
     }
-
-
 }
 </style>

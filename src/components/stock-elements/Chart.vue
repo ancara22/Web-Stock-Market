@@ -11,23 +11,24 @@ export default {
     name: "ChartElement",
     props: {
         stock: { type: Object },      //Chart data
-        detailed: { type: Boolean },      //True to show the graph scales, false to show minumum details
-        graph: { type: String },
-        coloredChart: { type: Boolean }
+        detailed: { type: Boolean },  //True to show the graph scales, false to show minumum details
+        graph: { type: String },      
+        coloredChart: { type: Boolean } //Chart Color
     },
 
     data() {
         return {
             chart: null,        //The future chart object
-            displayGrid: true, //Chart detailing controler
-            pointRadoius: 1,     //Chart points size
-            borderWidth: 2,
-            chartData: [],
-            timestamps: [],
-            color: ''
+            displayGrid: true,  //Chart detailing controler
+            pointRadoius: 1,    //Chart points size
+            borderWidth: 2,     //Border width
+            chartData: [],      //Chart Data
+            timestamps: [],     //Time labesls
+            color: ''           //Chart color
         }
     },
 
+    //On Component Mounted
     mounted: function() {
         this.chartData = this.stock.chart[this.graph];
         this.timestamps = this.stock.timestamp;
@@ -39,6 +40,7 @@ export default {
             this.borderWidth = 1
         }
 
+        //Set the chart color
         let tempData = Object.values(this.chartData);
 
         if(tempData[0] < tempData[tempData.length -1] && this.coloredChart){
@@ -49,14 +51,15 @@ export default {
             this.color = 'rgb(3, 193, 3)'
         }
 
-
-        this.renderChart(); //Render the chart
+        //Render the chart
+        this.renderChart(); 
     },
 
     methods: {
-        //Chart rendering
+        //Render the Chart
         renderChart: function() {
-            const ctxt = this.$refs.chartBox.getContext('2d');      //Get the output box
+            //Get the output box
+            const ctxt = this.$refs.chartBox.getContext('2d');     
 
             //Set the chart
             this.chart = new Chart(ctxt, {
@@ -72,6 +75,7 @@ export default {
                             pointRadius: this.pointRadoius,
                         }]
                     },
+
                     options: {
                         plugins: {
                             legend: { display: false }
@@ -96,7 +100,6 @@ export default {
                     }
                 })
         },
-
     }
 }
 </script>

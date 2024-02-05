@@ -23,29 +23,29 @@ import 'font-awesome/css/font-awesome.css';
 
 export default {
     name: "NewsElement",
-
     props: {
-        news: {
-            type: Object
-        }
+        news: { type: Object }  //News Data
     },
 
     mounted: function() {
+        //Get News Sentiment
         this.getSentiment();
     },
 
     data() {
         return {
-            sentiment: '',
-            emodji: '',
+            sentiment: '',  //News Sentiment
+            emodji: '',     //News Emoji
         }
     },
    
     methods: {
+        //Open News URL in another browser tab
         openUrl: function() {
             window.open(this.news.url);
         },
 
+        //Format timestamp in normal date
         formatTime: function(date) {
             const year = date.substring(0, 4);
             const month = date.substring(4, 6);
@@ -57,9 +57,11 @@ export default {
             return formattedDateTime;
         },
 
+        //Get News Sentiment
         getSentiment() {
             this.sentiment = this.$store.getters.getSentiment(this.news.title).sentiment;
 
+            //Set the sentiment and css class
             if(this.sentiment  == "Negative") {
                 this.emodji = 'fa-solid fa-face-frown back_red';
             } else if(this.sentiment  == "Positive") {
@@ -67,17 +69,12 @@ export default {
             } else {
                 this.emodji = 'fa-solid fa-face-meh back_gray';
             }
-
-
         }
-
     }
 }
 </script>
 
-
 <style scoped>
-
 .news-descr {
     background-color: none;
     text-align: left;
